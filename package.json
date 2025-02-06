@@ -1,9 +1,14 @@
 {
-  "name": "koishi-plugin-openai",
-  "description": "",
+  "name": "@d7z-bot/koishi-plugin-openai",
+  "description": "openai 工具箱，提供给其他项目使用",
   "version": "0.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "homepage": "https://github.com/d7z-bot/openai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d7z-bot/openai"
+  },
   "files": [
     "lib",
     "dist"
@@ -15,8 +20,16 @@
     "koishi",
     "plugin"
   ],
-  "devDependencies": {},
   "peerDependencies": {
     "koishi": "^4.18.3"
+  },
+  "dependencies": {
+    "openai": "^4.83.0"
+  },
+  "koishi": {
+    "description": {
+      "en": "OpenAI Tools",
+      "zh": "OpenAI 工具箱"
+    }
   }
 }
