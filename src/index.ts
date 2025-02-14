@@ -63,6 +63,15 @@ export function apply(ctx: Context, config: Config) {
   ctx.command('openai.ask <message>', {
     authority: 4
   }).action(async function (c, message: string) {
+    if (c.session.quote != null) {
+      message = message +"\n\n"+c.session.quote.elements.map(it=>{
+        if(it.type  == "forward"){
+          return it.attrs.content.filter(cit=>cit.type=='text').map(cit=>cit.user_id + ":"+ cit.raw_message).join("\n\n")
+        }else{
+          return it.toString()
+        }
+      })
+    }
     const rel = await bind.ask(message);
     ctx.logger.info("收到消息", message, "响应长度",rel.length);
     if (rel.length > config.zip){
