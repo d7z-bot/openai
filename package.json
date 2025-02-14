@@ -1,7 +1,7 @@
 {
   "name": "@d7z-bot/koishi-plugin-openai",
   "description": "openai 工具箱，提供给其他项目使用",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "homepage": "https://github.com/d7z-bot/openai",

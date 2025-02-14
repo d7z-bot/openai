@@ -18,7 +18,7 @@ export interface Config {
   ask: ConfigModel
   zip: number,
   debug: boolean
-  direct:boolean
+  direct: boolean
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -60,27 +60,28 @@ export function apply(ctx: Context, config: Config) {
     config.retouch.model = message
     return msg
   })
-  ctx.command('openai.ask <message>', {
+  ctx.command('openai.ask [...messages]', {
     authority: 4
-  }).action(async function (c, message: string) {
+  }).action(async function (c, ...messages) {
+    let message = messages.join("")
     if (c.session.quote != null) {
-      message = message +"\n\n"+c.session.quote.elements.map(it=>{
-        if(it.type  == "forward"){
-          return it.attrs.content.filter(cit=>cit.type=='text').map(cit=>cit.user_id + ":"+ cit.raw_message).join("\n\n")
-        }else{
+      message = message + "\n\n" + c.session.quote.elements.map(it => {
+        if (it.type == "forward") {
+          return it.attrs.content.filter(cit => cit.type == 'text').map(cit => cit.user_id + ":" + cit.raw_message).join("\n\n")
+        } else {
           return it.toString()
         }
       })
     }
     const rel = await bind.ask(message);
-    ctx.logger.info("收到消息", message, "响应长度",rel.length);
-    if (rel.length > config.zip){
+    ctx.logger.info("收到消息", message, "响应长度", rel.length);
+    if (rel.length > config.zip) {
       return `<message forward>
    <message><author id="${c.session.userId}" name="${c.session.username}"/>${message}</message>
    <message><author id="${c.session.bot.user.id}"/>${rel}</message>
 </message>`
-    }else {
-      return h('at',{id:c.session.userId}) + rel
+    } else {
+      return h('at', {id: c.session.userId}) + rel
     }
   })
 }
