@@ -63,8 +63,8 @@ export function apply(ctx: Context, config: Config) {
   ctx.command('openai.ask <message>', {
     authority: 4
   }).action(async function (c, message: string) {
-    ctx.logger.info("收到消息", message);
     const rel = await bind.ask(message);
+    ctx.logger.info("收到消息", message, "响应长度",rel.length);
     if (rel.length > config.zip){
       return `<message forward>
    <message><author id="${c.session.userId}" name="${c.session.username}"/>${message}</message>
