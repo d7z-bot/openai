@@ -1,4 +1,4 @@
-import {Awaitable, Context, Schema, Service} from 'koishi'
+import {Awaitable, Context, h, Schema, Service} from 'koishi'
 import OpenAI from 'openai';
 
 export const name = 'openai'
@@ -16,6 +16,7 @@ export interface Config {
   token: string
   retouch: ConfigModel
   ask: ConfigModel
+  zip: number,
   debug: boolean
   direct:boolean
 }
@@ -38,7 +39,8 @@ export const Config: Schema<Config> = Schema.object({
       .role('textarea', {rows: [2, 4]})
       .default("请站在比较专业的角度回复"),
     clear: Schema.string().description('清理内容,仅在需要时使用').default(''),
-  }).description("提问配置")
+  }).description("提问配置"),
+  zip: Schema.number().description('折叠大小').default(30)
 })
 
 
@@ -62,10 +64,15 @@ export function apply(ctx: Context, config: Config) {
     authority: 4
   }).action(async function (c, message: string) {
     ctx.logger.info("收到消息", message);
-    return `<message forward>
+    const rel = await bind.ask(message);
+    if (rel.length > config.zip){
+      return `<message forward>
    <message><author id="${c.session.userId}" name="${c.session.username}"/>${message}</message>
-   <message><author id="${c.session.bot.user.id}"/>${await bind.ask(message)}</message>
+   <message><author id="${c.session.bot.user.id}"/>${rel}</message>
 </message>`
+    }else {
+      return h('at',{id:c.session.userId}) + rel
+    }
   })
 }
 
